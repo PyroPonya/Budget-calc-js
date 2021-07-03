@@ -16,7 +16,7 @@ let currentLanguage = langGen > 0.5 ? "en" : "ru";
 const dayRu = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
 const dayEn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-console.log(`Current language => ${currentLanguage}`)
+console.log(`Current language => ${currentLanguage}`);
 //(a)if
 if (currentLanguage === "en") {
   console.log(dayEn);
@@ -48,7 +48,7 @@ console.log("==============c");
 let nameGen = Math.random();
 let namePerson = nameGen > 0.6 ? "Артем" : nameGen > 0.3 ? "Максим" : "Машина";
 
-console.log(`Current nam => ${namePerson}`)
+console.log(`Current nam => ${namePerson}`);
 //Conditional_Operator
 console.log(
   namePerson === "Артем"
