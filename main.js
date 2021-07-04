@@ -12,15 +12,14 @@ let money;
 
 //Проверка на <number>
 const isNumber = (el) => {
-  return !isNaN(parseFloat(el)) && isFinite(el) && el.trim() !== '';
+  return !isNaN(parseFloat(el)) && isFinite(el) && el.trim() !== "";
 };
 
 //Получение дохода <number>
 const start = () => {
-  do{
+  do {
     money = prompt("Введите ваш месячный доход:");
-  }
-  while(!isNumber(money));
+  } while (!isNumber(money));
 };
 start();
 
@@ -31,18 +30,32 @@ let addExpenses = prompt(
   .toLowerCase()
   .split(",")
   .map((el) => el.trim());
-//let deposit = prompt("Есть ли у вас депозит в банке?") === "да" ? true : false;
+
 let deposit = confirm("Есть ли у вас депозит в банке?");
+//Получение месячных затрат и проверка на <number>(1)
 let expenses1 = prompt("Введите обязательную статью расходов?(1)", "машина");
-let amount1 = +prompt("Во сколько это обойдется?(1)", "100");
+let amount1 = prompt("Во сколько это обойдется?(1)");
+while (!isNumber(amount1)) {
+  amount1 = prompt(
+    `Во сколько это обойдется?(1)
+  Пожалуйста введите числовое значение расходов на: '${expenses1}'`
+  );
+}
+//Получение месячных затрат и проверка на <number>(2)
 let expenses2 = prompt("Введите обязательную статью расходов?(2)", "собака");
-let amount2 = +prompt("Во сколько это обойдется?(2)", "200");
+let amount2 = prompt("Во сколько это обойдется?(2)");
+while (!isNumber(amount2)) {
+  amount2 = prompt(
+    `Во сколько это обойдется?(2)
+  Пожалуйста введите числовое значение расходов на: '${expenses2}'`
+  );
+}
 let income = "freelance";
 let mission = 7000;
 
 //Функция возвращает сумму всех обязательных расходов за месяц
 const getExpensesMonth = () => {
-  return amount1 + amount2;
+  return parseFloat(amount1) + parseFloat(amount2);
 };
 console.log(`getExpensesMonth=> ${getExpensesMonth()}`);
 //Функция возвращает Накопления за месяц (Доходы минус расходы)
