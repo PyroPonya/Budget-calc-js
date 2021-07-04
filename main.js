@@ -32,35 +32,30 @@ let addExpenses = prompt(
   .map((el) => el.trim());
 
 let deposit = confirm("Есть ли у вас депозит в банке?");
-//Получение месячных затрат и проверка на <number>(1)
-let expenses1 = prompt("Введите обязательную статью расходов?(1)", "машина");
-let amount1 = prompt("Во сколько это обойдется?(1)");
-while (!isNumber(amount1)) {
-  amount1 = prompt(
-    `Во сколько это обойдется?(1)
-  Пожалуйста введите числовое значение расходов на: '${expenses1}'`
-  );
-}
-//Получение месячных затрат и проверка на <number>(2)
-let expenses2 = prompt("Введите обязательную статью расходов?(2)", "собака");
-let amount2 = prompt("Во сколько это обойдется?(2)");
-while (!isNumber(amount2)) {
-  amount2 = prompt(
-    `Во сколько это обойдется?(2)
-  Пожалуйста введите числовое значение расходов на: '${expenses2}'`
-  );
-}
 let income = "freelance";
 let mission = 7000;
 
 //Функция возвращает сумму всех обязательных расходов за месяц
-const getExpensesMonth = () => {
-  return parseFloat(amount1) + parseFloat(amount2);
+let expenses = [];
+const getExpensesMonth = function () {
+  let sum = 0;
+  let amount;
+  for (let i = 0; i < 4; i++) {
+    expenses.push(prompt(`Введите обязательную статью расходов [${i} из 4]?`));
+    while (!isNumber(amount)) {
+      amount = prompt(`Во сколько '${expenses[i]}' обойдется?`);
+    }
+    sum += parseFloat(amount);
+    amount = '';
+  }
+  return sum;
 };
-console.log(`getExpensesMonth=> ${getExpensesMonth()}`);
+const expensesAmount = getExpensesMonth();
+
+console.log(`getExpensesMonth=> ${expensesAmount}`);
 //Функция возвращает Накопления за месяц (Доходы минус расходы)
 const getAccumulatedMonth = () => {
-  return money - getExpensesMonth();
+  return money - expensesAmount;
 };
 console.log(`getAccumulatedMonth => ${getAccumulatedMonth()}`);
 
@@ -77,7 +72,7 @@ const getTargetMonth = (target, accumulatedPerMonth) => {
 };
 
 console.log(`Ваши расходы на : ${addExpenses}
-в месяц составляют : ${getExpensesMonth()} рублей/долларов/гривен/юани`);
+в месяц составляют : ${expensesAmount} рублей/долларов/гривен/юани`);
 console.log(
   `При таких темпах вы достигнете вашей цели в : 
 ${mission} рублей/долларов/гривен/юани
