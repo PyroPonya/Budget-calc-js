@@ -36,8 +36,18 @@ const isNumber = (el) => {
   return !isNaN(parseFloat(el)) && isFinite(el);
 };
 
-function getRandomNumber() {
+const getRandomNumber = (el) => {
   const num = Math.floor(Math.random() * 100 + 1);
+  if (num === +el) {
+    getRandomNumber(el);
+  } else {
+    return num;
+  }
+};
+
+function getStartGame() {
+  let num = getRandomNumber();
+  let attempts = 10;
   const askPlayer = function () {
     let playerGuess = prompt("Угадай число от 1 до 100");
     //Условия выхода из рекурсии
@@ -46,7 +56,15 @@ function getRandomNumber() {
         return alert("Игра окончена");
       }
     } else if (+playerGuess === num) {
-      return alert(`${playerGuess}? Поздравляю, Вы угадали!!!`);
+      alert(`${playerGuess}? Поздравляю, Вы угадали!!!
+      Всего за ${10 - attempts} попыток ...`);
+      if (confirm("Хотели бы сыграть еще?")) {
+        num = getRandomNumber(num);
+        attempts = 10;
+        return startGame();
+      } else {
+        return alert("Игра окончена");
+      }
     }
     //Условия запуска рекурсии
     if (!isNumber(playerGuess) || playerGuess > 100 || playerGuess < 1) {
@@ -60,7 +78,9 @@ function getRandomNumber() {
         playerGuess !== 0 &&
         playerGuess !== null
       ) {
-        alert(`Загаданное число больше чем ${playerGuess}`);
+        alert(
+          `Загаданное число больше чем ${playerGuess}, осталось ${--attempts} попыток ...`
+        );
         askPlayer(num);
       } else if (
         num < playerGuess &&
@@ -68,7 +88,9 @@ function getRandomNumber() {
         playerGuess !== 0 &&
         playerGuess !== null
       ) {
-        alert(`Загаданное число меньше чем ${playerGuess}`);
+        alert(
+          `Загаданное число меньше чем ${playerGuess}, осталось ${--attempts} попыток ...`
+        );
         askPlayer(num);
       }
     }
@@ -77,6 +99,6 @@ function getRandomNumber() {
 }
 
 //start
-const startGame = getRandomNumber();
+const startGame = getStartGame();
 startGame();
 console.dir(startGame); //closure check
