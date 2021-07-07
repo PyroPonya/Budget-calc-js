@@ -35,31 +35,42 @@
 const isNumber = (el) => {
   return !isNaN(parseFloat(el)) && isFinite(el);
 };
-
-const getRandomNumber = (el) => {
-  const num = Math.floor(Math.random() * 100 + 1);
+//Случайное значение от min до max
+const getRandomNumber = (min, max, el) => {
+  const num = Math.floor(Math.random() * max + min);
   if (num === +el) {
     getRandomNumber(el);
   } else {
     return num;
   }
 };
+//Получение значения от пользователя
+const getUserNumber = (str) => {
+  let num = prompt(str);
+  if (num === null) return null;
+  else if (typeof num === "number") return num;
+  else if (typeof num !== "number") return parseFloat(num);
+};
 
-function getStartGame() {
-  let num = getRandomNumber();
+function getStartGame(min, max) {
+  let num = getRandomNumber(min, max);
   let attempts = 10;
   const askPlayer = function () {
-    let playerGuess = prompt("Угадай число от 1 до 100");
+    let playerGuess = getUserNumber(
+      `Угадай число от ${min} до ${max}`,
+      min,
+      max
+    );
     //Условия выхода из рекурсии
-    if (playerGuess === 0 || playerGuess === null) {
+    if (playerGuess === null) {
       if (confirm("Уже все?")) {
         return alert("Игра окончена");
       }
-    } else if (+playerGuess === num) {
+    } else if (playerGuess === num) {
       alert(`${playerGuess}? Поздравляю, Вы угадали!!!
       Всего за ${10 - attempts} попыток ...`);
       if (confirm("Хотели бы сыграть еще?")) {
-        num = getRandomNumber(num);
+        num = getRandomNumber(min, max, num);
         attempts = 10;
         return startGame();
       } else {
@@ -71,23 +82,13 @@ function getStartGame() {
       alert("Введи число! [от 1 до 100]");
       askPlayer(num);
     }
-    if (playerGuess > 0 || playerGuess < 100) {
-      if (
-        num > playerGuess &&
-        playerGuess > 0 &&
-        playerGuess !== 0 &&
-        playerGuess !== null
-      ) {
+    if (playerGuess > 0 && playerGuess < 100) {
+      if (num > playerGuess) {
         alert(
           `Загаданное число больше чем ${playerGuess}, осталось ${--attempts} попыток ...`
         );
         askPlayer(num);
-      } else if (
-        num < playerGuess &&
-        playerGuess < 100 &&
-        playerGuess !== 0 &&
-        playerGuess !== null
-      ) {
+      } else if (num < playerGuess) {
         alert(
           `Загаданное число меньше чем ${playerGuess}, осталось ${--attempts} попыток ...`
         );
@@ -99,6 +100,6 @@ function getStartGame() {
 }
 
 //start
-const startGame = getStartGame();
+const startGame = getStartGame(1, 100);
 startGame();
 console.dir(startGame); //closure check
