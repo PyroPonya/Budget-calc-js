@@ -45,14 +45,14 @@ const getRandomNumber = (min, max, el) => {
   }
 };
 //Получение значения от пользователя
+//Условие задания запрещает дублировать строку запроса в случае
+//неправильного ввода пользователя, нужно использовать другую (см. 86-89 строку)
 const getUserNumber = (str) => {
   let num = prompt(str);
   if (num === null) {
     return null;
-  } else if (typeof num === "number") {
-    return num;
-  } else if (typeof num !== "number") {
-    return parseFloat(num);
+  } else if (isNumber(num)) {
+    return +num;
   }
 };
 
@@ -67,22 +67,24 @@ function getStartGame(min, max) {
     );
     //Условия выхода из рекурсии
     if (playerGuess === null) {
+      //По условиям задания надо было использовать промпт, алерт и конфирм.
       if (confirm("Уже все?")) {
         return alert("Игра окончена");
       }
     } else if (playerGuess === num) {
       alert(`${playerGuess}? Поздравляю, Вы угадали!!!
       Всего за ${11 - attempts} попыток ...`);
+      //Рестарт игры
       if (confirm("Хотели бы сыграть еще?")) {
         num = getRandomNumber(min, max, num);
         attempts = 10;
-        return startGame();
+        return startGame(min, max);
       } else {
         return alert("Игра окончена");
       }
     }
     //Условия запуска рекурсии
-    if (!isNumber(playerGuess) || playerGuess > 100 || playerGuess < 1) {
+    if (playerGuess > 100 || playerGuess < 1) {
       alert(`Введи число! [от ${min} до ${max}]`);
       askPlayer(num);
     }
