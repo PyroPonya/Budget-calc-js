@@ -27,7 +27,7 @@ let money;
 const start = () => {
   do {
     money = getUserNumber("Введите ваш месячный доход:");
-    if (money === null) return null; //@TODO: temp loop-breaker
+    if (money === null) {return null;} //@TODO: temp loop-breaker
   } while (!isNumber(money));
 };
 start();
