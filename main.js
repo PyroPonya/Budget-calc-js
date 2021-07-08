@@ -27,41 +27,71 @@ let money;
 const start = () => {
   do {
     money = getUserNumber("Введите ваш месячный доход:");
-    if (money === null) {return null;} //@TODO: temp loop-breaker
+    if (money === null) {
+      return null;
+    } //@TODO: temp loop-breaker
   } while (!isNumber(money));
 };
 start();
 
 let appData = {
   income: {},
-  addIncome: ["freelance"],
+  addIncome: [],
   expenses: {},
   addExpenses: [],
-  deposit: false,
-  mission: 7000,
-  period: 0,
   budget: money,
   budgetDay: 0,
   budgetMonth: 0,
   expensesMonth: 0,
+  deposit: false,
+  percentDeposit: 0,
+  moneyDeposit: 0,
+  mission: 7000,
+  period: 3,
   asking: function () {
-    appData.addExpenses = prompt(
-      "Перечислите возможные расходы за рассчитываемый период через запятую (пример: Квартплата, проездной, кредит)",
-      "Квартплата, проездной, кредит"
-    )
-      .toLowerCase()
-      .split(",")
-      .map((el) => el.trim());
+    if (confirm("Усть ли у вас дополнительный источник зароботка?")) {
+      let itemIncome;
+      let cashIncome;
+      do {
+        itemIncome = prompt(
+          "Какой у вас вид дополнительного зароботка?",
+          "Фриланс"
+        );
+      } while (isNumber(itemIncome) || itemIncome.trim() === "");
+
+      do {
+        cashIncome = prompt("Сколько в месяц вы на этом зарабатываете?", 100);
+      } while (!isNumber(cashIncome));
+      appData.income[itemIncome] = cashIncome;
+    }
+
+    do {
+      appData.addExpenses = prompt(
+        "Перечислите возможные расходы за рассчитываемый период через запятую (пример: Квартплата, проездной, кредит)",
+        "Квартплата, проездной, кредит"
+      )
+        .toLowerCase()
+        .split(",")
+        .map((el) => el.trim());
+    } while (
+      appData.addExpenses.filter((el) => {
+        return isNumber(el);
+      }).length > 0
+    );
 
     appData.deposit = confirm("Есть ли у вас депозит в банке?");
-    for (let i = 0; i < 4; i++) {
-      let expensesKey = prompt(
-        `Введите обязательную статью расходов [${i + 1} из 4]?`
-      );
-      let expensesValue = "";
-      while (!isNumber(expensesValue)) {
+    for (let i = 0; i < 2; i++) {
+      let expensesKey;
+      let expensesValue;
+      do {
+        expensesKey = prompt(
+          `Введите обязательную статью расходов [${i + 1} из 2]?`
+        );
+      } while (isNumber(expensesKey) || expensesKey.trim() === "");
+
+      do {
         expensesValue = getUserNumber(`Во сколько '${expensesKey}' обойдется?`);
-      }
+      } while (!isNumber(expensesValue));
       appData.expenses[expensesKey] = expensesValue;
     }
     this.getExpensesMonth();
@@ -100,6 +130,22 @@ let appData = {
       return console.log("Что-то пошло не так " + new Error());
     }
   },
+  getInfoDeposit: function () {
+    if (appData.deposit) {
+      do {
+        appData.percentDeposit = prompt("Какой годовой процент?", "10");
+      } while (
+        isNumber(appData.percentDeposit) ||
+        appData.percentDeposit.trim() === ""
+      );
+      do {
+        appData.moneyDeposit = prompt("Какая сумма заложена?", 1000);
+      } while (!isNumber(appData.moneyDeposit));
+    }
+  },
+  calcSavedMoney: function () {
+    return appData.budgetMonth * appData.period;
+  },
 };
 appData.asking();
 
@@ -120,3 +166,13 @@ const appLogger = () => {
   }
 };
 appLogger();
+
+//========================================================
+const addExpensesLogger = () => {
+  let tempArr = [];
+  for (let el of appData.addExpenses) {
+    tempArr.push(el.charAt(0).toUpperCase() + el.substr(1));
+  }
+  return tempArr.join(", ");
+};
+console.log(addExpensesLogger());
