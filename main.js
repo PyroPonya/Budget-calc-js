@@ -10,15 +10,16 @@
 
 //Проверка на <number>
 const isNumber = (el) => {
-  return !isNaN(parseFloat(el)) && isFinite(el) && el !== "";
+  return !isNaN(parseFloat(el)) && isFinite(el);
 };
 //Получение значения от пользователя, преобразование в <number>
 const getUserNumber = (str) => {
   let num = prompt(str);
-  if (num === null) return null;
-  //@TODO: temp loop-breaker
-  else if (typeof num === "number") return num;
-  else if (typeof num !== "number") return parseFloat(num);
+  if (num === null) {
+    return null; //@TODO: temp loop-breaker
+  } else if (isNumber(num)) {
+    return +num;
+  }
 };
 
 //Получение дохода <number>
@@ -44,7 +45,6 @@ let appData = {
   budgetMonth: 0,
   expensesMonth: 0,
   asking: function () {
-    let keyValueBind;
     appData.addExpenses = prompt(
       "Перечислите возможные расходы за рассчитываемый период через запятую (пример: Квартплата, проездной, кредит)",
       "Квартплата, проездной, кредит"
@@ -62,8 +62,7 @@ let appData = {
       while (!isNumber(expensesValue)) {
         expensesValue = getUserNumber(`Во сколько '${expensesKey}' обойдется?`);
       }
-      keyValueBind = { [`${expensesKey}`]: expensesValue };
-      appData.expenses = { ...appData.expenses, ...keyValueBind };
+      appData.expenses[expensesKey] = expensesValue;
     }
     this.getExpensesMonth();
   },
@@ -75,10 +74,12 @@ let appData = {
       sum += appData.expenses[val];
     }
     appData.expensesMonth = sum;
+    appData.getBudget();
   },
   //Функция возвращает Накопления за месяц (Доходы минус расходы)
-  getAccumulatedMonth: () => {
-    return appData.budget - appData.expensesMonth;
+  getBudget: () => {
+    appData.budgetMonth = appData.budget - appData.expensesMonth;
+    appData.budgetDay = Math.round((appData.budgetMonth / 30) * 10) / 10;
   },
   //Подсчитывает за какой период будет достигнута цель
   getTargetMonth: () => {
@@ -102,9 +103,6 @@ let appData = {
 };
 appData.asking();
 
-appData.budgetMonth = appData.getAccumulatedMonth();
-appData.budgetDay = Math.round((appData.budgetMonth / 30) * 10) / 10;
-
 console.log(`Ваши расходы на : ${Object.keys(appData.expenses)}
 в месяц составляют : ${appData.expensesMonth} рублей/долларов/гривен/юани`);
 console.log(
@@ -112,7 +110,7 @@ console.log(
 ${appData.mission} рублей/долларов/гривен/юани
 через ${appData.getTargetMonth(appData.mission, appData.budgetMonth)}`
 );
-appData.getStatusIncome(); // should i save it as appData.period?
+appData.getStatusIncome();
 console.log(appData); //obj check
 
 const appLogger = () => {
