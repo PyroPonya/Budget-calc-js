@@ -30,35 +30,30 @@ function renderTime() {
     day: 'numeric',
     timezone: 'UTC+3',
   };
+  const arr = ['час', 'часа', 'часов'];
 
-  const timeSpeller = () => {
-    let hour = date.getUTCHours();
-    let minute = date.getMinutes();
-    let second = date.getSeconds();
-    if (date.getHours() === 1 || date.getHours() === 21) {
-      hour = `${date.getUTCHours()} час `;
-    } else if (
-      date.getUTCHours() === 2 ||
-      date.getHours() === 3 ||
-      date.getHours() === 4 ||
-      date.getHours() === 22
-    ) {
-      hour = `${date.getHours()} часа `;
+  let hour = date.getHours();
+  let minute = date.getMinutes();
+  let second = date.getSeconds();
+  //Склонение времени
+  const timeSpeller = (h, m, s, arrTime) => {
+    if (h === 1 || h === 21) {
+      h = `${h} ${arrTime[0]} `;
+    } else if (h === 2 || h === 3 || h === 4 || h === 22) {
+      h = `${h} ${arrTime[1]} `;
     } else {
-      hour = `${date.getHours()} часов `;
+      h = `${h} ${arrTime[2]} `;
     }
-    minute = `${date.getMinutes()} мин `;
-    second = `${date.getSeconds()} сек `;
-    return hour + minute + second;
+    m = `${m} мин `;
+    s = `${s} сек `;
+    return h + m + s;
   };
-  const timeShower = () => {
-    let hour = date.getUTCHours();
-    let minute = date.getMinutes();
-    let second = date.getSeconds();
-    minute = minute < 10 ? '0' + minute : minute;
-    second = second < 10 ? '0' + second : second;
-    hour = hour < 10 ? '0' + hour : hour;
-    return `${hour}:${minute}:${second}`;
+  //Опциональный донулятор
+  const timeWithZero = (h, m, s) => {
+    m = m < 10 ? '0' + m : m;
+    s = s < 10 ? '0' + s : s;
+    h = h < 10 ? '0' + h : h;
+    return `${h}:${m}:${s}`;
   };
   let rendField;
 
@@ -66,11 +61,11 @@ function renderTime() {
   rendField += `(1) Сегодня ${days[date.getDay()]}, ${date.toLocaleString(
     'ru',
     options
-  )}, ${timeSpeller()}`;
+  )}, ${timeSpeller(hour, minute, second, arr)}`;
   rendField += '</br>==============================================</br>';
   rendField += `(2) ${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}.${
     date.getMonth() < 10 ? '0' + date.getMonth() : date.getDate()
-  }.${date.getFullYear()} - ${timeShower()}`;
+  }.${date.getFullYear()} - ${timeWithZero(hour, minute, second)}`;
   rendField += '</br>==============================================</br>';
   document.body.innerHTML = rendField;
 }
