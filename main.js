@@ -10,18 +10,11 @@
 //===================Var_selectors========================
 //Рассчитать
 const startBtn = document.getElementById('start');
-const plusBtnColl = document.getElementsByTagName('button');
 //Плюс доход
-let incomeAddBtn;
+const incomeAddBtn = document.querySelector('button.income_add');
 //Плюс затраты
-let expensesAddBtn;
-for (let el of plusBtnColl) {
-  if (el.classList.contains('income_add')) {
-    incomeAddBtn = el;
-  } else if (el.classList.contains('expenses_add')) {
-    expensesAddBtn = el;
-  }
-}
+const expensesAddBtn = document.querySelector('button.expenses_add');
+
 //Депозит чекбокс
 const depositCheckbox = document.querySelector('#deposit-check');
 //Возможные доходы
