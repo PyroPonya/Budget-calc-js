@@ -116,9 +116,6 @@ let appData = {
     if (incomeItems.length === 3) {
       incomeAddBtn.style.display = 'none';
     }
-    //@TODO: event handler
-    // blockInputLetters();
-    // blockInputNumbers();
   },
   getIncome: function () {
     incomeItems.forEach(function (item) {
