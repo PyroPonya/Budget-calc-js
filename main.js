@@ -101,13 +101,13 @@ let appData = {
     }
   },
   getExpenses: function () {
-    expensesItems.forEach(function (item) {
+    for (let item of expensesItems) {
       let itemExpenses = item.querySelector('.expenses-title').value;
       let cashExpenses = item.querySelector('.expenses-amount').value;
       if (itemExpenses !== '' && cashExpenses !== '') {
         appData.expenses[itemExpenses] = +cashExpenses;
       }
-    });
+    }
   },
   addIncomeBlock: function () {
     let cloneIncomeItem = incomeItems[0].cloneNode(true);
@@ -118,11 +118,11 @@ let appData = {
     }
   },
   getIncome: function () {
-    incomeItems.forEach(function (item) {
+    for (let item of incomeItems) {
       let itemIncome = item.querySelector('.income-title').value;
       let cashIncome = item.querySelector('.income-amount').value;
       appData.income[itemIncome] = +cashIncome;
-    });
+    }
 
     for (let key in appData.income) {
       appData.incomeMonth += +appData.income[key];
