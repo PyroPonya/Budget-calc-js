@@ -99,9 +99,6 @@ let appData = {
     if (expensesItems.length === 3) {
       expensesAddBtn.style.display = 'none';
     }
-    //@TODO: event handler
-    blockInputLetters();
-    blockInputNumbers();
   },
   getExpenses: function () {
     expensesItems.forEach(function (item) {
@@ -120,8 +117,8 @@ let appData = {
       incomeAddBtn.style.display = 'none';
     }
     //@TODO: event handler
-    blockInputLetters();
-    blockInputNumbers();
+    // blockInputLetters();
+    // blockInputNumbers();
   },
   getIncome: function () {
     incomeItems.forEach(function (item) {
@@ -216,31 +213,36 @@ startBtn.addEventListener('mouseenter', () => {
   }
 });
 //non RU input block
-const blockInputLetters = () => {
-  for (let el of inputsCollection) {
-    if (el.getAttribute('placeholder') === 'Наименование') {
-      el.addEventListener('keypress', (e) => {
-        if (!e.key.match(/[а-яА-Я.\,\s]/g)) {
-          e.preventDefault();
-        }
-      });
-    }
+for (let el of inputsCollection) {
+  if (
+    el.getAttribute('placeholder') === 'Наименование' &&
+    el.parentNode.parentNode.getAttribute('hasListenerLetters') !== 'true'
+  ) {
+    el.parentNode.parentNode.setAttribute('hasListenerLetters', 'true');
+    el.parentNode.parentNode.addEventListener('keypress', (e) => {
+      if (
+        !e.key.match(/[а-яА-Я.\,\s]/g) &&
+        e.target.getAttribute('placeholder') === 'Наименование'
+      ) {
+        e.preventDefault();
+      }
+    });
   }
-};
-blockInputLetters();
+}
 //non NUMeric input block
-const blockInputNumbers = () => {
-  for (let el of inputsCollection) {
-    if (el.getAttribute('placeholder') === 'Сумма') {
-      el.addEventListener('keypress', (e) => {
-        if (!e.key.match(/[0-9]/g)) {
-          e.preventDefault();
-        }
-      });
-    }
+for (let el of inputsCollection) {
+  if (
+    el.getAttribute('placeholder') === 'Сумма' &&
+    el.parentNode.parentNode.getAttribute('hasListenerNumbers') !== 'true'
+  ) {
+    el.parentNode.parentNode.setAttribute('hasListenerNumbers', 'true');
+    el.parentNode.parentNode.addEventListener('keypress', (e) => {
+      if (!e.key.match(/[0-9]/g) && e.target.getAttribute('placeholder') === 'Сумма') {
+        e.preventDefault();
+      }
+    });
   }
-};
-blockInputNumbers();
+}
 
 // console.log(`Ваши расходы на : ${Object.keys(appData.expenses)}
 // в месяц составляют : ${appData.expensesMonth} рублей/долларов/гривен/юани`);
