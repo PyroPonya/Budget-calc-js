@@ -32,13 +32,13 @@ let startBtn = document.getElementById('start'),
   // incomeAmount = document.querySelector('input.income-amount'),
   expensesNameInput = document.querySelector('input.expenses-title'),
   //expensesSizeInput = document.querySelector('input.expenses-amount'),
-  expensesItems = document.querySelectorAll('.expenses-items'),
+  expensesItems = document.getElementsByClassName('expenses-items'),
   additionalExpensesItem = document.querySelector('input.additional_expenses-item'),
   targetAmount = document.querySelector('input.target-amount'),
   periodSelect = document.querySelector('input.period-select'),
-  incomeItems = document.querySelectorAll('.income-items'),
+  incomeItems = document.getElementsByClassName('income-items'),
   periodAmount = document.querySelector('.period-amount');
-let inputsCollection = document.querySelectorAll('input');
+let inputsCollection = document.getElementsByTagName('input');
 
 //========================================================
 //Проверка на <number>
@@ -96,10 +96,12 @@ let appData = {
     let cloneExpensesItem = expensesItems[0].cloneNode(true);
     cloneExpensesItem.querySelectorAll('input').forEach((el) => (el.value = ''));
     expensesItems[0].parentNode.insertBefore(cloneExpensesItem, expensesAddBtn);
-    expensesItems = document.querySelectorAll('.expenses-items');
     if (expensesItems.length === 3) {
       expensesAddBtn.style.display = 'none';
     }
+    //@TODO: event handler
+    blockInputLetters();
+    blockInputNumbers();
   },
   getExpenses: function () {
     expensesItems.forEach(function (item) {
@@ -114,10 +116,12 @@ let appData = {
     let cloneIncomeItem = incomeItems[0].cloneNode(true);
     cloneIncomeItem.querySelectorAll('input').forEach((el) => (el.value = ''));
     incomeItems[0].parentNode.insertBefore(cloneIncomeItem, incomeAddBtn);
-    incomeItems = document.querySelectorAll('.income-items');
     if (incomeItems.length === 3) {
       incomeAddBtn.style.display = 'none';
     }
+    //@TODO: event handler
+    blockInputLetters();
+    blockInputNumbers();
   },
   getIncome: function () {
     incomeItems.forEach(function (item) {
@@ -196,7 +200,7 @@ startBtn.addEventListener('click', appData.start);
 incomeAddBtn.addEventListener('click', appData.addIncomeBlock);
 expensesAddBtn.addEventListener('click', appData.addExpensesBlock);
 periodSelect.addEventListener('change', (e) => {
-  periodAmount.innerText = e.target.value;
+  periodAmount.textContent = e.target.value;
 });
 //Salary amount required
 startBtn.addEventListener('mouseenter', () => {
@@ -212,23 +216,31 @@ startBtn.addEventListener('mouseenter', () => {
   }
 });
 //non RU input block
-for (let el of inputsCollection) {
-  if (el.getAttribute('placeholder') === 'Наименование') {
-    el.addEventListener('keydown', (e) => {
-      let regexp = /^[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-\s]+$/g;
-      e.target.value = e.target.value.replace(regexp, '');
-    });
+const blockInputLetters = () => {
+  for (let el of inputsCollection) {
+    if (el.getAttribute('placeholder') === 'Наименование') {
+      el.addEventListener('keypress', (e) => {
+        if (!e.key.match(/[а-яА-Я.\,\s]/g)) {
+          e.preventDefault();
+        }
+      });
+    }
   }
-}
+};
+blockInputLetters();
 //non NUMeric input block
-for (let el of inputsCollection) {
-  if (el.getAttribute('placeholder') === 'Сумма') {
-    el.addEventListener('keydown', (e) => {
-      let regexp = /^[a-zA-Zа-яА-Я!@#\$%\^\&*\)\(+=._-\s]+$/g;
-      e.target.value = e.target.value.replace(regexp, '');
-    });
+const blockInputNumbers = () => {
+  for (let el of inputsCollection) {
+    if (el.getAttribute('placeholder') === 'Сумма') {
+      el.addEventListener('keypress', (e) => {
+        if (!e.key.match(/[0-9]/g)) {
+          e.preventDefault();
+        }
+      });
+    }
   }
-}
+};
+blockInputNumbers();
 
 // console.log(`Ваши расходы на : ${Object.keys(appData.expenses)}
 // в месяц составляют : ${appData.expensesMonth} рублей/долларов/гривен/юани`);
