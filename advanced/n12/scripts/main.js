@@ -6,16 +6,16 @@ const todoControl = document.querySelector('.todo-control'),
   todoCompleted = document.querySelector('.todo-completed'),
   todoRemove = document.getElementsByClassName('todo-remove'),
   todoItems = document.getElementsByClassName('todo-item');
-  
-  const getLocalSave = () => {
-    return JSON.parse(localStorage.getItem('todoDataSave'));
-  };
 
-  const todoData = getLocalSave();
-  
-  const setLocalSave = () => {
-    return localStorage.setItem('todoDataSave', JSON.stringify(todoData));
-  };
+const getLocalSave = () => {
+  return JSON.parse(localStorage.getItem('todoDataSave'));
+};
+
+const todoData = getLocalSave() ? getLocalSave() : [];
+
+const setLocalSave = () => {
+  return localStorage.setItem('todoDataSave', JSON.stringify(todoData));
+};
 
 const todoRemoveFn = () => {
   if (todoItems.length > 0) {
@@ -35,29 +35,30 @@ const todoRemoveFn = () => {
   }
 };
 
-
 const render = () => {
   todoList.textContent = '';
   todoCompleted.textContent = '';
-  todoData.forEach((item) => {
-    const li = document.createElement('li');
-    li.classList.add('todo-item');
-    li.innerHTML = `<span class="text-todo">${item.value}</span>
+  if (todoData.length > 0) {
+    todoData.forEach((item) => {
+      const li = document.createElement('li');
+      li.classList.add('todo-item');
+      li.innerHTML = `<span class="text-todo">${item.value}</span>
     <div class="todo-buttons">
     <button class="todo-remove"></button>
     <button class="todo-complete"></button>
     </div>`;
-    if (item.completed) {
-      todoCompleted.append(li);
-    } else {
-      todoList.append(li);
-    }
-    const btnTodoCompleted = li.querySelector('.todo-complete');
-    btnTodoCompleted.addEventListener('click', () => {
-      item.completed = !item.completed;
-      render();
+      if (item.completed) {
+        todoCompleted.append(li);
+      } else {
+        todoList.append(li);
+      }
+      const btnTodoCompleted = li.querySelector('.todo-complete');
+      btnTodoCompleted.addEventListener('click', () => {
+        item.completed = !item.completed;
+        render();
+      });
     });
-  });
+  }
   todoRemoveFn();
   setLocalSave();
 };
