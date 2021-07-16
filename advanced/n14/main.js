@@ -6,11 +6,11 @@ const divan = btns.querySelector('.divan');
 
 class DomElement {
   constructor(selector, height, width, bg, fontSize) {
-    (this.selector = selector),
-      (this.height = height),
-      (this.width = width),
-      (this.bg = bg),
-      (this.fontSize = fontSize);
+    this.selector = selector,
+    this.height = height,
+    this.width = width,
+    this.bg = bg,
+    this.fontSize = fontSize;
   }
   selectorFilter() {
     if (this.selector[0] === '.') {

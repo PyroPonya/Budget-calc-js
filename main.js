@@ -182,7 +182,7 @@ AppData.prototype.calcPeriod = function () {
 };
 AppData.prototype.launchListeners = function () {
   startBtn.addEventListener('click', () => {
-    if (!startBtn.classList.contains('resetFields')) {
+    if (!startBtn.classList.contains('resetFields') && salaryAmount.value !== '') {
       this.start();
     }
   });
@@ -190,7 +190,9 @@ AppData.prototype.launchListeners = function () {
   startBtn.addEventListener('click', () => {
     const textInputs = document.querySelectorAll('input[type=text]');
     for (let el of textInputs) {
-      el.disabled = true;
+      if (salaryAmount.value !== '') {
+        el.disabled = true;
+      }
     }
     if (startBtn.classList.contains('resetFields')) {
       startBtn.classList.remove('resetFields');
@@ -199,9 +201,11 @@ AppData.prototype.launchListeners = function () {
         el.value = '';
         startBtn.textContent = 'Рассчитать';
       }
-    } else {
+    } else if (salaryAmount.value !== '') {
       startBtn.classList.add('resetFields');
       startBtn.textContent = 'Reset';
+    } else {
+      return new Error();
     }
   });
   incomeAddBtn.addEventListener('click', this.addIncomeBlock);
@@ -210,7 +214,7 @@ AppData.prototype.launchListeners = function () {
     periodAmount.textContent = e.target.value;
   });
   //Salary amount required
-  startBtn.addEventListener('mouseenter', () => {
+  startBtn.addEventListener('click', () => {
     if (salaryAmount.value === '') {
       startBtn.disabled = true;
       salaryAmount.addEventListener('input', () => {
