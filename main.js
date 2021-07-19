@@ -7,7 +7,7 @@ const startBtn = document.getElementById('start'),
   //Плюс затраты
   expensesAddBtn = document.querySelector('button.expenses_add'),
   //Депозит чекбокс
-  depositCheckbox = document.querySelector('#deposit-check'),
+  // depositCheckbox = document.querySelector('#deposit-check'),
   //Возможные доходы
   additionalIncomeItems = document.querySelectorAll('.additional_income-item'),
   //Поля вывода
@@ -20,10 +20,6 @@ const startBtn = document.getElementById('start'),
   targetMonthValue = document.querySelector('.target_month-value'),
   //Оставшиеся поля
   salaryAmount = document.querySelector('input.salary-amount'),
-  incomeTitle = document.querySelector('input.income-title'),
-  // incomeAmount = document.querySelector('input.income-amount'),
-  expensesNameInput = document.querySelector('input.expenses-title'),
-  //expensesSizeInput = document.querySelector('input.expenses-amount'),
   expensesItems = document.getElementsByClassName('expenses-items'),
   additionalExpensesItem = document.querySelector('input.additional_expenses-item'),
   targetAmount = document.querySelector('input.target-amount'),
@@ -63,6 +59,14 @@ class AppData {
     this.percentDeposit = 0;
     this.moneyDeposit = 0;
     this.mission = 0;
+  }
+  get infoObj() {
+    return this;
+  }
+  set infoObj(el) {
+    for (let key in this) {
+      this[key] = el[key];
+    }
   }
   start() {
     this.budget = +salaryAmount.value;
@@ -124,9 +128,9 @@ class AppData {
       addItem.forEach((el) => {
         if (el !== '') {
           if (item.parentNode) {
-            this.addExpenses.push(el);
+            this.addExpenses.push(el[0].toUpperCase() + el.slice(1).toLowerCase());
           } else {
-            this.addIncome.push(el);
+            this.addIncome.push(el[0].toUpperCase() + el.slice(1).toLowerCase());
           }
         }
       });
@@ -178,19 +182,22 @@ class AppData {
     return this.budgetMonth * periodSelect.value;
   }
   launchListeners() {
+    //старт запускается только при заполненном поле :salaryAmount:
     startBtn.addEventListener('click', () => {
       if (!startBtn.classList.contains('resetFields') && salaryAmount.value !== '') {
         this.start();
       }
     });
-    //input fieldset reset
+    //ресет полей ввода
     startBtn.addEventListener('click', () => {
       const textInputs = document.querySelectorAll('input[type=text]');
       for (let el of textInputs) {
+        //если :salaryAmount: не пустое, то при нажатии все инпуты блокируются
         if (salaryAmount.value !== '') {
           el.disabled = true;
         }
       }
+      //если на кнопке есть класс, то его снимают, заменяется textContent, разблокируются инпуты
       if (startBtn.classList.contains('resetFields')) {
         startBtn.classList.remove('resetFields');
         for (let el of textInputs) {
@@ -198,6 +205,9 @@ class AppData {
           el.value = '';
           startBtn.textContent = 'Рассчитать';
         }
+        //Используем сеттер для записи свойств нового экземпляра объекта в старый
+        this.infoObj = new AppData();
+        //иначе, если указанного класса нет на кнопке и :salaryAmount: не пустое, то кнопке добавляется класс, меняется textContent, инпуты остаются заблокированными
       } else if (salaryAmount.value !== '') {
         startBtn.classList.add('resetFields');
         startBtn.textContent = 'Reset';
@@ -265,8 +275,6 @@ class AppData {
 }
 const appData = new AppData();
 appData.launchListeners();
-
-appData.getAddExpInc();
 
 // console.log(`Ваши расходы на : ${Object.keys(appData.expenses)}
 // в месяц составляют : ${appData.expensesMonth} рублей/долларов/гривен/юани`);
