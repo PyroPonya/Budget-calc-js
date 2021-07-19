@@ -68,8 +68,7 @@ class AppData {
     this.budget = +salaryAmount.value;
     this.getExpInc();
     this.getExpensesMonth();
-    this.getAddExpenses();
-    this.getAddIncome();
+    this.getAddExpInc();
     this.getBudget();
     this.showResult();
   }
@@ -114,24 +113,27 @@ class AppData {
     };
     addBlock(el);
   }
-  getAddExpenses() {
-    const addExpenses = additionalExpensesItem.value.split(',');
-    addExpenses.forEach((item) => {
-      item = item.trim();
-      if (item !== '') {
-        this.addExpenses.push(item);
+  getAddExpInc() {
+    const addItems = (item) => {
+      let addItem;
+      if (item.parentNode) {
+        addItem = item.value.split(',').map((el) => el.trim());
+      } else {
+        addItem = [...item].map((el) => el.value.trim());
       }
-    });
+      addItem.forEach((el) => {
+        if (el !== '') {
+          if (item.parentNode) {
+            this.addExpenses.push(el);
+          } else {
+            this.addIncome.push(el);
+          }
+        }
+      });
+    };
+    addItems(additionalExpensesItem);
+    addItems(additionalIncomeItems);
   }
-  getAddIncome() {
-    additionalIncomeItems.forEach((item) => {
-      const itemValue = item.value.trim();
-      if (itemValue !== '') {
-        this.addIncome.push(itemValue);
-      }
-    });
-  }
-
   //Функция возвращает сумму всех обязательных расходов за месяц
   getExpensesMonth() {
     let sum = 0;
@@ -263,6 +265,8 @@ class AppData {
 }
 const appData = new AppData();
 appData.launchListeners();
+
+appData.getAddExpInc();
 
 // console.log(`Ваши расходы на : ${Object.keys(appData.expenses)}
 // в месяц составляют : ${appData.expensesMonth} рублей/долларов/гривен/юани`);
