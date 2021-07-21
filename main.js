@@ -7,7 +7,10 @@ const startBtn = document.getElementById('start'),
   //Плюс затраты
   expensesAddBtn = document.querySelector('button.expenses_add'),
   //Депозит чекбокс
-  // depositCheckbox = document.querySelector('#deposit-check'),
+  depositCheck = document.getElementById('deposit-check'),
+  depositBank = document.querySelector('.deposit-bank'),
+  depositAmount = document.querySelector('.deposit-amount'),
+  depositPercent = document.querySelector('.deposit-percent'),
   //Возможные доходы
   additionalIncomeItems = document.querySelectorAll('.additional_income-item'),
   //Поля вывода
@@ -73,6 +76,7 @@ class AppData {
     this.getExpInc();
     this.getExpensesMonth();
     this.getAddExpInc();
+    this.getInfoDeposit();
     this.getBudget();
     this.showResult();
   }
@@ -148,7 +152,11 @@ class AppData {
   }
   //Функция возвращает Накопления за месяц (Доходы минус расходы)
   getBudget() {
-    this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth;
+    const monthDeposit =
+      this.moneyDeposit *
+      ((this.percentDeposit > 100 ? this.percentDeposit.slice(-2) : this.percentDeposit) /
+        100);
+    this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth + monthDeposit;
     this.budgetDay = Math.round((this.budgetMonth / 30) * 10) / 10;
   }
   //Подсчитывает за какой период будет достигнута цель
@@ -167,19 +175,41 @@ class AppData {
       return console.log('Что-то пошло не так ' + new Error());
     }
   }
-  //Получение дохода с депозита (не используется)
-  getInfoDeposit() {
-    if (this.deposit) {
-      do {
-        this.percentDeposit = prompt('Какой годовой процент?', '10');
-      } while (isNumber(this.percentDeposit) || this.percentDeposit.trim() === '');
-      do {
-        this.moneyDeposit = prompt('Какая сумма заложена?', 1000);
-      } while (!isNumber(this.moneyDeposit));
-    }
-  }
   calcPeriod() {
     return this.budgetMonth * periodSelect.value;
+  }
+  //Получение дохода с депозита
+  getInfoDeposit() {
+    if (this.deposit) {
+      this.percentDeposit = depositPercent.value;
+      this.moneyDeposit = depositAmount.value;
+    }
+  }
+  changePercent() {
+    const valueSelect = this.value;
+    if (valueSelect === 'other') {
+      depositPercent.value = '';
+      //ограничение на числовое значение в методе getBudget, скрыто от глаз пользователя + блокировка не нумов в лисенерах
+    } else {
+      depositPercent.value = valueSelect;
+    }
+  }
+  depositHandler() {
+    if (depositCheck.checked) {
+      depositBank.style.display = 'inline-block';
+      depositAmount.style.display = 'inline-block';
+      this.deposit = true;
+      depositBank.addEventListener('change', this.changePercent);
+    } else {
+      this.deposit = false;
+      depositBank.style.display = 'none';
+      depositAmount.style.display = 'none';
+      depositPercent.style.display = 'none';
+      depositBank.value = '';
+      depositAmount.value = '';
+      depositPercent.value = '';
+      depositBank.removeEventListener('change', this.changePercent);
+    }
   }
   launchListeners() {
     //старт запускается только при заполненном поле :salaryAmount:
@@ -205,6 +235,8 @@ class AppData {
           el.value = '';
           startBtn.textContent = 'Рассчитать';
         }
+        depositCheck.checked = false;
+        this.depositHandler();
         //Используем сеттер для записи свойств нового экземпляра объекта в старый
         this.infoObj = new AppData();
         //иначе, если указанного класса нет на кнопке и :salaryAmount: не пустое, то кнопке добавляется класс, меняется textContent, инпуты остаются заблокированными
@@ -224,6 +256,15 @@ class AppData {
     periodSelect.addEventListener('change', (e) => {
       periodAmount.textContent = e.target.value;
     });
+    depositBank.addEventListener('change', () => {
+      if (depositBank.value === 'other') {
+        depositPercent.style.display = 'inline-block';
+      } else {
+        depositPercent.style.display = 'none';
+        depositPercent.value = '';
+      }
+    });
+    depositCheck.addEventListener('change', this.depositHandler.bind(this));
     //Salary amount required
     startBtn.addEventListener('click', () => {
       if (salaryAmount.value === '') {
@@ -257,14 +298,17 @@ class AppData {
     //non NUMeric input block
     for (let el of inputsCollection) {
       if (
-        el.getAttribute('placeholder') === 'Сумма' &&
-        el.parentNode.parentNode.getAttribute('hasListenerNumbers') !== 'true'
+        (el.getAttribute('placeholder') === 'Сумма' &&
+          el.parentNode.parentNode.getAttribute('hasListenerNumbers') !== 'true') ||
+        (el.getAttribute('placeholder') === 'Процент' &&
+          el.parentNode.parentNode.getAttribute('hasListenerNumbers') !== 'true')
       ) {
         el.parentNode.parentNode.setAttribute('hasListenerNumbers', 'true');
         el.parentNode.parentNode.addEventListener('keypress', (e) => {
           if (
-            !e.key.match(/[0-9]/g) &&
-            e.target.getAttribute('placeholder') === 'Сумма'
+            (!e.key.match(/[0-9]/g) &&
+              e.target.getAttribute('placeholder') === 'Сумма') ||
+            (!e.key.match(/[0-9]/g) && e.target.getAttribute('placeholder') === 'Процент')
           ) {
             e.preventDefault();
           }
