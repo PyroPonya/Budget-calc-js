@@ -1,2 +1,3 @@
 # glo-js-first
- glo-academy course rep one
+Budget calculator
+wip example hosted on firebase: https://budget-calc-f8871.web.app/
