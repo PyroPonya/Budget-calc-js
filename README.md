@@ -1,4 +1,4 @@
-# glo-js-first
-Budget calculator
-wip example hosted on firebase: 
+# glo-js-first<br/>
+Budget calculator<br/>
+wip example hosted on firebase:<br/>
 https://budget-calc-f8871.web.app/
